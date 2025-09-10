@@ -1,5 +1,5 @@
 from . import db
-from datetime import datetime
+from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class Usuario(db.Model):
@@ -29,7 +29,7 @@ class Tarefa(db.Model):
     titulo = db.Column(db.String(200), nullable=False)
     descricao = db.Column(db.String(500), default='')
     concluida = db.Column(db.Boolean, default=False, nullable=False)
-    data_criacao = db.Column(db.DateTime, default=datetime.utcnow)
+    data_criacao = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
 
     def to_dict(self):

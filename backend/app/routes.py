@@ -31,7 +31,10 @@ def login():
     usuario = Usuario.query.filter_by(email=dados['email']).first()
 
     if usuario and usuario.check_senha(dados['senha']):
-        access_token = create_access_token(identity=usuario.id)
+        
+        
+        access_token = create_access_token(identity=str(usuario.id))
+        
         return jsonify(access_token=access_token)
     
     return jsonify({"msg": "Credenciais inválidas"}), 401
@@ -49,6 +52,7 @@ def criar_tarefa():
     nova_tarefa = Tarefa(
         titulo=dados['titulo'],
         descricao=dados.get('descricao', ''),
+        concluida=dados.get('concluida', False),
         id_usuario=id_usuario_atual
     )
     db.session.add(nova_tarefa)
