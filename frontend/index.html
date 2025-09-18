@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Tarefas</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <div id="auth-section">
+            </div>
+
+        <div id="tasks-section" class="hidden">
+            <header>
+                <h1>Gestão de Tarefas</h1>
+                <button id="logout-btn">Sair</button>
+            </header>
+
+            <div class="filters-card">
+                <input type="text" id="search-input" placeholder="Buscar por título ou descrição...">
+                <div class="filter-group">
+                    <select id="status-filter">
+                        <option value="todos">Todos os Status</option>
+                        <option value="pendente">Pendente</option>
+                        <option value="em_andamento">Em Andamento</option>
+                        <option value="concluida">Concluída</option>
+                    </select>
+                    <select id="priority-filter">
+                        <option value="todas">Todas as Prioridades</option>
+                        <option value="baixa">Baixa</option>
+                        <option value="media">Média</option>
+                        <option value="alta">Alta</option>
+                    </select>
+                </div>
+                <button id="add-task-btn" class="add-btn">Nova Tarefa</button>
+            </div>
+            
+            <div id="stats-panel" class="stats-panel">
+                <span id="total-tasks">Total: 0</span>
+                <span id="page-info">Página 1 de 1</span>
+            </div>
+
+            <div id="task-list"></div>
+            
+            <div id="pagination-container"></div>
+        </div>
+    </div>
+
+    <div id="task-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 id="modal-title">Adicionar Tarefa</h2>
+            <form id="task-form">
+                <input type="hidden" id="task-id">
+                <input type="text" id="task-title" placeholder="Título da Tarefa" required>
+                <textarea id="task-description" placeholder="Descrição"></textarea>
+                
+                <label for="task-status">Status</label>
+                <select id="task-status">
+                    <option value="pendente">Pendente</option>
+                    <option value="em_andamento">Em Andamento</option>
+                    <option value="concluida">Concluída</option>
+                </select>
+                
+                <label for="task-priority">Prioridade</label>
+                <select id="task-priority">
+                    <option value="baixa">Baixa</option>
+                    <option value="media">Média</option>
+                    <option value="alta">Alta</option>
+                </select>
+                
+                <button type="submit">Salvar</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

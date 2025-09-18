@@ -1,0 +1,75 @@
+/* ... (código CSS anterior para body, container, auth, etc.) ... */
+
+/* NOVO: Estilos para o painel de filtros */
+.filters-card {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+}
+.filters-card input[type="text"] {
+    flex-grow: 1; /* Ocupa o espaço disponível */
+    min-width: 200px;
+}
+.filter-group {
+    display: flex;
+    gap: 1rem;
+}
+
+/* NOVO: Estilos para o painel de estatísticas */
+.stats-panel {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    background-color: #e9ecef;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+/* ATUALIZADO: Estilos para o item da tarefa */
+.task-item {
+    /* ... (estilos anteriores) ... */
+    align-items: flex-start; /* Alinha no topo */
+}
+
+.task-details {
+    flex-grow: 1;
+}
+
+.task-item h3 {
+    margin: 0 0 0.5rem 0;
+}
+
+.task-item p {
+    margin: 0 0 1rem 0;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+/* NOVO: Badges de Status e Prioridade */
+.task-meta {
+    display: flex;
+    gap: 0.5rem;
+}
+.badge {
+    padding: 0.25rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+.status-pendente { background-color: #ffc107; color: #343a40; }
+.status-em_andamento { background-color: #17a2b8; color: white; }
+.status-concluida { background-color: #28a745; color: white; }
+
+.priority-baixa { border: 1px solid #6c757d; color: #6c757d; }
+.priority-media { border: 1px solid #007bff; color: #007bff; }
+.priority-alta { border: 1px solid #dc3545; color: #dc3545; }
+
+/* ... (resto do CSS para modal, paginação, etc.) ... */
