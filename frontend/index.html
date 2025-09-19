@@ -9,8 +9,28 @@
 <body>
 
     <div class="container">
+
         <div id="auth-section">
+            <div id="login-form-container">
+                <h2>Login</h2>
+                <form id="login-form">
+                    <input type="email" id="login-email" placeholder="Email" required>
+                    <input type="password" id="login-senha" placeholder="Senha" required>
+                    <button type="submit">Entrar</button>
+                </form>
+                <p>Não tem uma conta? <a href="#" id="show-register-link">Registre-se</a></p>
             </div>
+            <div id="register-form-container" class="hidden">
+                <h2>Registro de Conta</h2>
+                <form id="register-form">
+                    <input type="text" id="register-nome" placeholder="Nome Completo" required>
+                    <input type="email" id="register-email" placeholder="Email" required>
+                    <input type="password" id="register-senha" placeholder="Senha" required>
+                    <button type="submit">Registrar</button>
+                </form>
+                <p>Já tem uma conta? <a href="#" id="show-login-link">Faça Login</a></p>
+            </div>
+        </div>
 
         <div id="tasks-section" class="hidden">
             <header>
@@ -43,7 +63,6 @@
             </div>
 
             <div id="task-list"></div>
-            
             <div id="pagination-container"></div>
         </div>
     </div>
@@ -56,21 +75,18 @@
                 <input type="hidden" id="task-id">
                 <input type="text" id="task-title" placeholder="Título da Tarefa" required>
                 <textarea id="task-description" placeholder="Descrição"></textarea>
-                
                 <label for="task-status">Status</label>
                 <select id="task-status">
                     <option value="pendente">Pendente</option>
                     <option value="em_andamento">Em Andamento</option>
                     <option value="concluida">Concluída</option>
                 </select>
-                
                 <label for="task-priority">Prioridade</label>
                 <select id="task-priority">
                     <option value="baixa">Baixa</option>
                     <option value="media">Média</option>
                     <option value="alta">Alta</option>
                 </select>
-                
                 <button type="submit">Salvar</button>
             </form>
         </div>
