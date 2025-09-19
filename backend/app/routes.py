@@ -1,17 +1,46 @@
-# app/routes.py
+# backend/app/routes.py
 from flask import request, jsonify, Blueprint
 from .models import db, Usuario, Tarefa
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 api = Blueprint('api', __name__)
 
+# --- ROTAS DE AUTENTICAÇÃO (sem alteração) ---
+@api.route('/auth/register', methods=['POST'])
+def registrar_usuario():
+    dados = request.get_json()
+    if not dados or not 'email' in dados or not 'senha' in dados or not 'nome' in dados:
+        return jsonify({"msg": "Campos 'nome', 'email' e 'senha' são obrigatórios"}), 400
+    if Usuario.query.filter_by(email=dados['email']).first():
+        return jsonify({"msg": "Este email já está em uso"}), 409
+    novo_usuario = Usuario(nome=dados['nome'], email=dados['email'])
+    novo_usuario.set_senha(dados['senha'])
+    db.session.add(novo_usuario)
+    db.session.commit()
+    return jsonify({"msg": "Usuário registrado com sucesso!"}), 201
+
+@api.route('/auth/login', methods=['POST'])
+def login():
+    dados = request.get_json()
+    if not dados or not 'email' in dados or not 'senha' in dados:
+        return jsonify({"msg": "Campos 'email' e 'senha' são obrigatórios"}), 400
+    usuario = Usuario.query.filter_by(email=dados['email']).first()
+    if usuario and usuario.check_senha(dados['senha']):
+        access_token = create_access_token(identity=str(usuario.id))
+        return jsonify(access_token=access_token)
+    return jsonify({"msg": "Credenciais inválidas"}), 401
+
+
+# --- ROTAS DO CRUD DE TAREFAS (ATUALIZADAS) ---
 
 @api.route('/tarefas', methods=['POST'])
 @jwt_required()
 def criar_tarefa():
-    # ... (lógica de criar_tarefa atualizada para receber status e prioridade) ...
     id_usuario_atual = get_jwt_identity()
     dados = request.get_json()
+    if not dados or 'titulo' not in dados:
+        return jsonify({"msg": "O campo 'titulo' é obrigatório"}), 400
+
     nova_tarefa = Tarefa(
         titulo=dados['titulo'],
         descricao=dados.get('descricao', ''),
@@ -26,27 +55,34 @@ def criar_tarefa():
 @api.route('/tarefas', methods=['GET'])
 @jwt_required()
 def listar_tarefas():
-    # ATUALIZADO: Lógica de filtros, busca e paginação
     id_usuario_atual = get_jwt_identity()
+
+    # Lógica para pegar os parâmetros de filtro da URL
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 5, type=int)
     search_term = request.args.get('q', '', type=str)
     status_filter = request.args.get('status', 'todos', type=str)
     priority_filter = request.args.get('prioridade', 'todas', type=str)
 
+    # Começa a consulta no banco de dados
     query = Tarefa.query.filter_by(id_usuario=id_usuario_atual)
 
+    # Aplica o filtro de busca, se existir
     if search_term:
         query = query.filter(db.or_(Tarefa.titulo.ilike(f'%{search_term}%'), Tarefa.descricao.ilike(f'%{search_term}%')))
-    
+
+    # Aplica o filtro de status, se não for "todos"
     if status_filter != 'todos':
         query = query.filter_by(status=status_filter)
-        
+
+    # Aplica o filtro de prioridade, se não for "todas"
     if priority_filter != 'todas':
         query = query.filter_by(prioridade=priority_filter)
 
+    # Pagina os resultados
     paginated_tasks = query.order_by(Tarefa.data_criacao.desc()).paginate(page=page, per_page=per_page, error_out=False)
-    
+
+    # Formata a resposta como o front-end espera
     return jsonify({
         'data': [t.to_dict() for t in paginated_tasks.items],
         'total': paginated_tasks.total,
@@ -57,7 +93,6 @@ def listar_tarefas():
 @api.route('/tarefas/<int:id_tarefa>', methods=['PUT'])
 @jwt_required()
 def atualizar_tarefa(id_tarefa):
-    # ... (lógica de atualizar_tarefa atualizada para incluir status e prioridade) ...
     id_usuario_atual = get_jwt_identity()
     tarefa = Tarefa.query.filter_by(id=id_tarefa, id_usuario=id_usuario_atual).first_or_404()
     dados = request.get_json()
@@ -68,4 +103,11 @@ def atualizar_tarefa(id_tarefa):
     db.session.commit()
     return jsonify(tarefa.to_dict()), 200
 
-# ... (código de deletar_tarefa sem alterações) ...
+@api.route('/tarefas/<int:id_tarefa>', methods=['DELETE'])
+@jwt_required()
+def deletar_tarefa(id_tarefa):
+    id_usuario_atual = get_jwt_identity()
+    tarefa = Tarefa.query.filter_by(id=id_tarefa, id_usuario=id_usuario_atual).first_or_404()
+    db.session.delete(tarefa)
+    db.session.commit()
+    return jsonify({"msg": "Tarefa deletada com sucesso"}), 200

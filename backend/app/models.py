@@ -1,10 +1,9 @@
-# app/models.py
+# backend/app/models.py
 from . import db
 from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class Usuario(db.Model):
-    # ... (código do Usuário sem alterações) ...
     __tablename__ = 'usuarios'
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
@@ -23,15 +22,16 @@ class Tarefa(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     titulo = db.Column(db.String(200), nullable=False)
     descricao = db.Column(db.String(500), default='')
-    
-    # NOVO: Campos para status e prioridade
-    status = db.Column(db.String(50), default='pendente', nullable=False)
+
+    # NOVO: Adicionamos os campos que o front-end precisa
+    status = db.Column(db.String(50), default='pendente', nullable=False) 
     prioridade = db.Column(db.String(50), default='media', nullable=False)
-    
+
     data_criacao = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
 
     def to_dict(self):
+        # ATUALIZADO: Incluímos os novos campos na resposta JSON
         return {
             'id': self.id,
             'titulo': self.titulo,
