@@ -9,29 +9,27 @@ class Usuario(db.Model):
     nome = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     hash_senha = db.Column(db.String(256), nullable=False)
+    criado_em = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     tarefas = db.relationship('Tarefa', backref='autor', lazy=True, cascade="all, delete-orphan")
 
-    def set_senha(self, senha):
-        self.hash_senha = generate_password_hash(senha)
-
-    def check_senha(self, senha):
-        return check_password_hash(self.hash_senha, senha)
+    def set_senha(self, senha): self.hash_senha = generate_password_hash(senha)
+    def check_senha(self, senha): return check_password_hash(self.hash_senha, senha)
 
 class Tarefa(db.Model):
     __tablename__ = 'tarefas'
+
     id = db.Column(db.Integer, primary_key=True)
     titulo = db.Column(db.String(200), nullable=False)
     descricao = db.Column(db.String(500), default='')
 
-    # NOVO: Adicionamos os campos que o front-end precisa
-    status = db.Column(db.String(50), default='pendente', nullable=False) 
+    status = db.Column(db.String(50), default='pendente', nullable=False)
     prioridade = db.Column(db.String(50), default='media', nullable=False)
 
-    data_criacao = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
+    # >>> mapeando para os nomes REAIS da tabela:
+    data_criacao = db.Column('criado_em', db.DateTime, default=lambda: datetime.now(timezone.utc))
+    id_usuario   = db.Column('usuario_id', db.Integer, db.ForeignKey('usuarios.id'), nullable=False)
 
     def to_dict(self):
-        # ATUALIZADO: Incluímos os novos campos na resposta JSON
         return {
             'id': self.id,
             'titulo': self.titulo,
